@@ -289,6 +289,11 @@ Elm.Bingo.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $String = Elm.String.make(_elm);
+   var entryList = A2($Html.ul,
+   _L.fromArray([]),
+   _L.fromArray([A2($Html.li,
+   _L.fromArray([]),
+   _L.fromArray([$Html.text("Future-Proof")]))]));
    var pageFooter = A2($Html.footer,
    _L.fromArray([]),
    _L.fromArray([A2($Html.a,
@@ -308,12 +313,14 @@ Elm.Bingo.make = function (_elm) {
    var view = A2($Html.div,
    _L.fromArray([$Html$Attributes.id("container")]),
    _L.fromArray([pageHeader
+                ,entryList
                 ,pageFooter]));
    var main = view;
    _elm.Bingo.values = {_op: _op
                        ,title: title
                        ,pageHeader: pageHeader
                        ,pageFooter: pageFooter
+                       ,entryList: entryList
                        ,view: view
                        ,main: main};
    return _elm.Bingo.values;
