@@ -5,6 +5,43 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import String exposing (toUpper, repeat, trimRight)
 
+-- UPDATE
+
+type Action
+  = NoOp
+  | Sort
+
+update action model =
+  case action of
+    NoOp ->
+      model
+
+    Sort ->
+      { model | entries <- List.sortBy .points model.entries }
+
+-- MODEL
+
+newEntry phrase points id =
+  {
+    phrase = phrase,
+    points = points,
+    wasSpoken = False,
+    id = id
+  }
+
+initialModel =
+  {
+    entries =
+      [
+        newEntry "Doing Agile" 200 2,
+        newEntry "In The Cloud" 300 3,
+        newEntry "Future-Proof" 100 1,
+        newEntry "Rockstar Ninja" 400 4
+      ]
+  }
+
+-- VIEW
+
 title message times =
   message ++ " "
     |> toUpper
@@ -12,18 +49,8 @@ title message times =
     |> trimRight
     |> text
 
-
-newEntry phrase points id =
-  { phrase = phrase,
-    points = points,
-    wasSpoken = False,
-    id = id
-  }
-
-
 pageHeader =
   h1 [ ] [ title "Bingo!" 3 ]
-
 
 pageFooter =
   footer
@@ -34,7 +61,6 @@ pageFooter =
         [ text "The Pragmatic Studio" ]
     ]
 
-
 entryItem entry =
   li
     [ ]
@@ -43,22 +69,20 @@ entryItem entry =
       span [ class "points" ] [ text (toString entry.points) ]
     ]
 
-
-entryList =
+entryList entries =
   ul
-    [ ]
-    [
-      entryItem (newEntry "Future-Proof" 100 1),
-      entryItem (newEntry "Doing Agile" 200 2)
-    ]
+    [ ] (List.map entryItem entries)
 
-
-view =
+view model =
   div
     [ id "container" ]
-    [ pageHeader, entryList, pageFooter ]
+    [ pageHeader, entryList model.entries, pageFooter ]
 
+-- WIRE IT ALL TOGETHER
 
 main =
-  view
+  -- view (update Sort initialModel)
+  initialModel
+    |> update Sort
+    |> view
 

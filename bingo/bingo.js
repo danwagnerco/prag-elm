@@ -299,30 +299,18 @@ Elm.Bingo.make = function (_elm) {
                    _L.fromArray([$Html$Attributes.$class("points")]),
                    _L.fromArray([$Html.text($Basics.toString(entry.points))]))]));
    };
+   var entryList = function (entries) {
+      return A2($Html.ul,
+      _L.fromArray([]),
+      A2($List.map,
+      entryItem,
+      entries));
+   };
    var pageFooter = A2($Html.footer,
    _L.fromArray([]),
    _L.fromArray([A2($Html.a,
    _L.fromArray([$Html$Attributes.href("https://pragmaticstudio.com")]),
    _L.fromArray([$Html.text("The Pragmatic Studio")]))]));
-   var newEntry = F3(function (phrase,
-   points,
-   id) {
-      return {_: {}
-             ,id: id
-             ,phrase: phrase
-             ,points: points
-             ,wasSpoken: false};
-   });
-   var entryList = A2($Html.ul,
-   _L.fromArray([]),
-   _L.fromArray([entryItem(A3(newEntry,
-                "Future-Proof",
-                100,
-                1))
-                ,entryItem(A3(newEntry,
-                "Doing Agile",
-                200,
-                2))]));
    var title = F2(function (message,
    times) {
       return $Html.text($String.trimRight($String.repeat(3)($String.toUpper(A2($Basics._op["++"],
@@ -334,15 +322,66 @@ Elm.Bingo.make = function (_elm) {
    _L.fromArray([A2(title,
    "Bingo!",
    3)]));
-   var view = A2($Html.div,
-   _L.fromArray([$Html$Attributes.id("container")]),
-   _L.fromArray([pageHeader
-                ,entryList
-                ,pageFooter]));
-   var main = view;
+   var view = function (model) {
+      return A2($Html.div,
+      _L.fromArray([$Html$Attributes.id("container")]),
+      _L.fromArray([pageHeader
+                   ,entryList(model.entries)
+                   ,pageFooter]));
+   };
+   var newEntry = F3(function (phrase,
+   points,
+   id) {
+      return {_: {}
+             ,id: id
+             ,phrase: phrase
+             ,points: points
+             ,wasSpoken: false};
+   });
+   var initialModel = {_: {}
+                      ,entries: _L.fromArray([A3(newEntry,
+                                             "Doing Agile",
+                                             200,
+                                             2)
+                                             ,A3(newEntry,
+                                             "In The Cloud",
+                                             300,
+                                             3)
+                                             ,A3(newEntry,
+                                             "Future-Proof",
+                                             100,
+                                             1)
+                                             ,A3(newEntry,
+                                             "Rockstar Ninja",
+                                             400,
+                                             4)])};
+   var update = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "NoOp": return model;
+            case "Sort":
+            return _U.replace([["entries"
+                               ,A2($List.sortBy,
+                               function (_) {
+                                  return _.points;
+                               },
+                               model.entries)]],
+              model);}
+         _U.badCase($moduleName,
+         "between lines 15 and 20");
+      }();
+   });
+   var Sort = {ctor: "Sort"};
+   var main = view(update(Sort)(initialModel));
+   var NoOp = {ctor: "NoOp"};
    _elm.Bingo.values = {_op: _op
-                       ,title: title
+                       ,NoOp: NoOp
+                       ,Sort: Sort
+                       ,update: update
                        ,newEntry: newEntry
+                       ,initialModel: initialModel
+                       ,title: title
                        ,pageHeader: pageHeader
                        ,pageFooter: pageFooter
                        ,entryItem: entryItem
